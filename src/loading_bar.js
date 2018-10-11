@@ -100,10 +100,10 @@ class LoadingBar extends Component {
     clearInterval(this.progressIntervalId)
     this.progressIntervalId = null
 
-    const terminatingAnimationDuration = (
-      this.isShown() || this.props.showFastActions ?
-      TERMINATING_ANIMATION_DURATION : 0
-    )
+    const terminatingAnimationDuration =
+      this.isShown() || this.props.showFastActions
+        ? TERMINATING_ANIMATION_DURATION
+        : 0
 
     this.terminatingAnimationTimeoutId = setTimeout(
       this.reset,
@@ -121,9 +121,8 @@ class LoadingBar extends Component {
   newPercent = (percent, progressIncrease) => {
     // Use cosine as a smoothing function
     // It could be any function to slow down progress near the ending 100%
-    const smoothedProgressIncrease = (
+    const smoothedProgressIncrease =
       progressIncrease * Math.cos(percent * (Math.PI / 2 / 100))
-    )
 
     return percent + smoothedProgressIncrease
   }
@@ -146,11 +145,10 @@ class LoadingBar extends Component {
   }
 
   buildStyle() {
-    const animationDuration = (
-      this.state.status === 'stopping' ?
-        TERMINATING_ANIMATION_DURATION :
-        ANIMATION_DURATION
-    )
+    const animationDuration =
+      this.state.status === 'stopping'
+        ? TERMINATING_ANIMATION_DURATION
+        : ANIMATION_DURATION
 
     //
     // browser css3 animation compatibility
@@ -197,6 +195,21 @@ class LoadingBar extends Component {
   }
 
   render() {
+    if (this.props.reactNative) {
+      const RNComponents = require('react-native')
+      const { status, percent } = this.state
+
+      return status === 'hidden' ? (
+        <RNComponents.View />
+      ) : (
+        <RNComponents.ProgressBarAndroid
+          styleAttr="Horizontal"
+          indeterminate={false}
+          progress={percent / 100}
+        />
+      )
+    }
+
     if (this.state.status === 'hidden') {
       return <div />
     }
@@ -217,7 +230,4 @@ const mapStateToProps = (state, ownProps) => ({
 polyfill(LoadingBar)
 const ConnectedLoadingBar = connect(mapStateToProps)(LoadingBar)
 
-export {
-  LoadingBar,
-  ConnectedLoadingBar as default,
-}
+export { LoadingBar, ConnectedLoadingBar as default }

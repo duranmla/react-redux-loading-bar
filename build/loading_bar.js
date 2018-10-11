@@ -179,6 +179,20 @@ var LoadingBar = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      if (this.props.reactNative) {
+        var RNComponents = require('react-native');
+        var _state = this.state,
+            status = _state.status,
+            percent = _state.percent;
+
+
+        return status === 'hidden' ? _react2.default.createElement(RNComponents.View, null) : _react2.default.createElement(RNComponents.ProgressBarAndroid, {
+          styleAttr: 'Horizontal',
+          indeterminate: false,
+          progress: percent / 100
+        });
+      }
+
       if (this.state.status === 'hidden') {
         return _react2.default.createElement('div', null);
       }
