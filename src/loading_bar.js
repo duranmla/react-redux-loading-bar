@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { polyfill } from 'react-lifecycles-compat'
 import { bool, number, object, string } from 'prop-types'
 import { connect } from 'react-redux'
+import { ProgressBarAndroid } from 'react-native'
 
 import { DEFAULT_SCOPE } from './loading_bar_ducks'
 
@@ -100,10 +101,10 @@ class LoadingBar extends Component {
     clearInterval(this.progressIntervalId)
     this.progressIntervalId = null
 
-    const terminatingAnimationDuration = (
-      this.isShown() || this.props.showFastActions ?
-      TERMINATING_ANIMATION_DURATION : 0
-    )
+    const terminatingAnimationDuration =
+      this.isShown() || this.props.showFastActions
+        ? TERMINATING_ANIMATION_DURATION
+        : 0
 
     this.terminatingAnimationTimeoutId = setTimeout(
       this.reset,
@@ -121,9 +122,8 @@ class LoadingBar extends Component {
   newPercent = (percent, progressIncrease) => {
     // Use cosine as a smoothing function
     // It could be any function to slow down progress near the ending 100%
-    const smoothedProgressIncrease = (
+    const smoothedProgressIncrease =
       progressIncrease * Math.cos(percent * (Math.PI / 2 / 100))
-    )
 
     return percent + smoothedProgressIncrease
   }
@@ -146,11 +146,10 @@ class LoadingBar extends Component {
   }
 
   buildStyle() {
-    const animationDuration = (
-      this.state.status === 'stopping' ?
-        TERMINATING_ANIMATION_DURATION :
-        ANIMATION_DURATION
-    )
+    const animationDuration =
+      this.state.status === 'stopping'
+        ? TERMINATING_ANIMATION_DURATION
+        : ANIMATION_DURATION
 
     //
     // browser css3 animation compatibility
@@ -198,14 +197,17 @@ class LoadingBar extends Component {
 
   render() {
     if (this.state.status === 'hidden') {
-      return <div />
+      return null
     }
 
     return (
-      <div>
-        <div style={this.buildStyle()} className={this.props.className} />
-        <div style={{ display: 'table', clear: 'both' }} />
-      </div>
+      <ProgressBarAndroid
+        color={this.props.color}
+        style={this.props.style}
+        styleAttr="Horizontal"
+        indeterminate={false}
+        progress={this.state.percent / 100}
+      />
     )
   }
 }
@@ -217,7 +219,4 @@ const mapStateToProps = (state, ownProps) => ({
 polyfill(LoadingBar)
 const ConnectedLoadingBar = connect(mapStateToProps)(LoadingBar)
 
-export {
-  LoadingBar,
-  ConnectedLoadingBar as default,
-}
+export { LoadingBar, ConnectedLoadingBar as default }

@@ -19,6 +19,8 @@ var _propTypes = require('prop-types');
 
 var _reactRedux = require('react-redux');
 
+var _reactNative = require('react-native');
+
 var _loading_bar_ducks = require('./loading_bar_ducks');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -180,15 +182,16 @@ var LoadingBar = function (_Component) {
     key: 'render',
     value: function render() {
       if (this.state.status === 'hidden') {
-        return _react2.default.createElement('div', null);
+        return null;
       }
 
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement('div', { style: this.buildStyle(), className: this.props.className }),
-        _react2.default.createElement('div', { style: { display: 'table', clear: 'both' } })
-      );
+      return _react2.default.createElement(_reactNative.ProgressBarAndroid, {
+        color: this.props.color,
+        style: this.props.style,
+        styleAttr: 'Horizontal',
+        indeterminate: false,
+        progress: this.state.percent / 100
+      });
     }
   }], [{
     key: 'shouldStart',
