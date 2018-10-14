@@ -229,7 +229,7 @@ LoadingBar.propTypes = {
   showFastActions: _propTypes.bool,
   updateTime: _propTypes.number,
   scope: _propTypes.string,
-  style: _propTypes.object
+  style: _propTypes.any
 };
 LoadingBar.defaultProps = {
   className: '',

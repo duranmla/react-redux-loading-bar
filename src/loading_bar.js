@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import { polyfill } from 'react-lifecycles-compat'
-import { bool, number, object, string } from 'prop-types'
+import { any, bool, number, object, string } from 'prop-types'
 import { connect } from 'react-redux'
 import { ProgressBarAndroid } from 'react-native'
 
@@ -26,7 +26,7 @@ class LoadingBar extends Component {
     showFastActions: bool,
     updateTime: number,
     scope: string,
-    style: object,
+    style: any,
   }
 
   static defaultProps = {
