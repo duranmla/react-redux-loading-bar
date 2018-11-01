@@ -90,17 +90,10 @@ class LoadingBar extends Component {
   }
 
   start() {
-    this.progressIntervalId = setInterval(
-      this.simulateProgress,
-      this.props.updateTime,
-    )
     this.setState({ status: 'running' })
   }
 
   stop() {
-    clearInterval(this.progressIntervalId)
-    this.progressIntervalId = null
-
     const terminatingAnimationDuration =
       this.isShown() || this.props.showFastActions
         ? TERMINATING_ANIMATION_DURATION
@@ -119,14 +112,7 @@ class LoadingBar extends Component {
     this.setState(initialState)
   }
 
-  newPercent = (percent, progressIncrease) => {
-    // Use cosine as a smoothing function
-    // It could be any function to slow down progress near the ending 100%
-    const smoothedProgressIncrease =
-      progressIncrease * Math.cos(percent * (Math.PI / 2 / 100))
-
-    return percent + smoothedProgressIncrease
-  }
+  newPercent = (percent, progressIncrease) => 50
 
   simulateProgress = () => {
     this.setState((prevState, { maxProgress, progressIncrease }) => {
@@ -145,56 +131,6 @@ class LoadingBar extends Component {
     return this.state.percent > 0 && this.state.percent <= 100
   }
 
-  buildStyle() {
-    const animationDuration =
-      this.state.status === 'stopping'
-        ? TERMINATING_ANIMATION_DURATION
-        : ANIMATION_DURATION
-
-    //
-    // browser css3 animation compatibility
-    // Style keys are camelCased in order to be
-    // consistent with accessing the properties on DOM nodes from JS
-    // (e.g. node.style.backgroundImage).
-    // Vendor prefixes other than ms should begin with a capital letter.
-    // This is why WebkitTransition has an uppercase “W”.
-    // https://reactjs.org/docs/dom-elements.html#style
-    const style = {
-      opacity: '1',
-      transform: `scaleX(${this.state.percent / 100})`,
-      msTransform: `scaleX(${this.state.percent / 100})`,
-      WebkitTransform: `scaleX(${this.state.percent / 100})`,
-      MozTransform: `scaleX(${this.state.percent / 100})`,
-      OTransform: `scaleX(${this.state.percent / 100})`,
-      transformOrigin: 'left',
-      msTransformOrigin: 'left',
-      WebkitTransformOrigin: 'left',
-      MozTransformOrigin: 'left',
-      OTransformOrigin: 'left',
-      transition: `transform ${animationDuration}ms linear`,
-      msTransition: `-ms-transform ${animationDuration}ms linear`,
-      WebkitTransition: `-webkit-transform ${animationDuration}ms linear`,
-      MozTransition: `-moz-transform ${animationDuration}ms linear`,
-      OTransition: `-o-transform ${animationDuration}ms linear`,
-      width: '100%',
-      willChange: 'transform, opacity',
-    }
-    // Use default styling if there's no CSS class applied
-    if (!this.props.className) {
-      style.height = '3px'
-      style.backgroundColor = 'red'
-      style.position = 'absolute'
-    }
-
-    if (this.isShown()) {
-      style.opacity = '1'
-    } else {
-      style.opacity = '0'
-    }
-
-    return { ...style, ...this.props.style }
-  }
-
   render() {
     if (this.state.status === 'hidden') {
       return null
@@ -205,8 +141,7 @@ class LoadingBar extends Component {
         color={this.props.color}
         style={this.props.style}
         styleAttr="Horizontal"
-        indeterminate={false}
-        progress={this.state.percent / 100}
+        indeterminate
       />
     )
   }

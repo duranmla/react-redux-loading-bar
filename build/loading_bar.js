@@ -60,11 +60,7 @@ var LoadingBar = function (_Component) {
       _this.terminatingAnimationTimeoutId = null;
       _this.setState(initialState);
     }, _this.newPercent = function (percent, progressIncrease) {
-      // Use cosine as a smoothing function
-      // It could be any function to slow down progress near the ending 100%
-      var smoothedProgressIncrease = progressIncrease * Math.cos(percent * (Math.PI / 2 / 100));
-
-      return percent + smoothedProgressIncrease;
+      return 50;
     }, _this.simulateProgress = function () {
       _this.setState(function (prevState, _ref2) {
         var maxProgress = _ref2.maxProgress,
@@ -111,15 +107,11 @@ var LoadingBar = function (_Component) {
   }, {
     key: 'start',
     value: function start() {
-      this.progressIntervalId = setInterval(this.simulateProgress, this.props.updateTime);
       this.setState({ status: 'running' });
     }
   }, {
     key: 'stop',
     value: function stop() {
-      clearInterval(this.progressIntervalId);
-      this.progressIntervalId = null;
-
       var terminatingAnimationDuration = this.isShown() || this.props.showFastActions ? TERMINATING_ANIMATION_DURATION : 0;
 
       this.terminatingAnimationTimeoutId = setTimeout(this.reset, terminatingAnimationDuration);
@@ -132,53 +124,6 @@ var LoadingBar = function (_Component) {
       return this.state.percent > 0 && this.state.percent <= 100;
     }
   }, {
-    key: 'buildStyle',
-    value: function buildStyle() {
-      var animationDuration = this.state.status === 'stopping' ? TERMINATING_ANIMATION_DURATION : ANIMATION_DURATION;
-
-      //
-      // browser css3 animation compatibility
-      // Style keys are camelCased in order to be
-      // consistent with accessing the properties on DOM nodes from JS
-      // (e.g. node.style.backgroundImage).
-      // Vendor prefixes other than ms should begin with a capital letter.
-      // This is why WebkitTransition has an uppercase “W”.
-      // https://reactjs.org/docs/dom-elements.html#style
-      var style = {
-        opacity: '1',
-        transform: 'scaleX(' + this.state.percent / 100 + ')',
-        msTransform: 'scaleX(' + this.state.percent / 100 + ')',
-        WebkitTransform: 'scaleX(' + this.state.percent / 100 + ')',
-        MozTransform: 'scaleX(' + this.state.percent / 100 + ')',
-        OTransform: 'scaleX(' + this.state.percent / 100 + ')',
-        transformOrigin: 'left',
-        msTransformOrigin: 'left',
-        WebkitTransformOrigin: 'left',
-        MozTransformOrigin: 'left',
-        OTransformOrigin: 'left',
-        transition: 'transform ' + animationDuration + 'ms linear',
-        msTransition: '-ms-transform ' + animationDuration + 'ms linear',
-        WebkitTransition: '-webkit-transform ' + animationDuration + 'ms linear',
-        MozTransition: '-moz-transform ' + animationDuration + 'ms linear',
-        OTransition: '-o-transform ' + animationDuration + 'ms linear',
-        width: '100%',
-        willChange: 'transform, opacity'
-        // Use default styling if there's no CSS class applied
-      };if (!this.props.className) {
-        style.height = '3px';
-        style.backgroundColor = 'red';
-        style.position = 'absolute';
-      }
-
-      if (this.isShown()) {
-        style.opacity = '1';
-      } else {
-        style.opacity = '0';
-      }
-
-      return _extends({}, style, this.props.style);
-    }
-  }, {
     key: 'render',
     value: function render() {
       if (this.state.status === 'hidden') {
@@ -189,8 +134,7 @@ var LoadingBar = function (_Component) {
         color: this.props.color,
         style: this.props.style,
         styleAttr: 'Horizontal',
-        indeterminate: false,
-        progress: this.state.percent / 100
+        indeterminate: true
       });
     }
   }], [{
